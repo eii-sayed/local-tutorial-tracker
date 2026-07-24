@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Local Tutorial Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon">▶</span><div><strong>Tutorial Tracker</strong><small>Private local course library</small></div></div>
+    <div class="top-actions">
+      <button id="globalSearchBtn" class="button secondary" title="Search Notes and Bookmarks" hidden>Search Notes</button>
+      <button id="toggleSidebarBtn" class="button secondary" title="Toggle Sidebar" hidden>☰</button>
+      <button id="continueBtn" class="button secondary" hidden>Continue watching</button>
+      <label class="button primary">Open course folder<input id="folderInput" type="file" webkitdirectory directory multiple hidden></label>
+    </div>
+  </header>
+
+  <main id="emptyState" class="empty-state">
+    <div class="empty-icon">▤</div>
+    <h1>Turn your tutorial folder into a course</h1>
+    <p>Select the root folder containing numbered section folders, videos, PDFs, PowerPoints, HTML files, and other resources.</p>
+    <label class="button primary large">Choose course folder<input id="emptyFolderInput" type="file" webkitdirectory directory multiple hidden></label>
+    <small>Files stay on this computer. Progress and notes are stored in this browser.</small>
+  </main>
+
+  <main id="app" class="app" hidden>
+    <section class="summary">
+      <div><small>COURSE</small><h1 id="courseTitle">Course</h1><p id="courseMeta"></p><p id="resourceMeta" class="resource-meta"></p></div>
+      <div class="overall"><span id="overallText">0%</span><div class="progress"><i id="overallBar"></i></div></div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-tools">
+          <input id="searchInput" type="search" placeholder="Search sections and lessons..." />
+          <div class="filters">
+            <button data-filter="all" class="active">All</button>
+            <button data-filter="progress">In progress</button>
+            <button data-filter="completed">Done</button>
+          </div>
+          <div class="tree-actions">
+            <button id="expandAllBtn">Expand All</button>
+            <button id="collapseAllBtn">Collapse All</button>
+          </div>
+        </div>
+        <div id="courseTree" class="course-tree"></div>
+      </aside>
+
+      <section class="content">
+        <div class="player-card">
+          <div id="playerEmpty" class="player-empty">Select a video lesson</div>
+          <video id="videoPlayer" controls preload="metadata" playsinline hidden></video><div id="videoError" class="video-error" hidden><strong>Browser cannot play this video</strong><span id="videoErrorText">The video codec may not be supported.</span><a id="externalVideo" class="button primary" href="#" target="_blank" download>Open or download video</a></div>
+          <div id="lessonHeader" class="lesson-header" hidden>
+            <div class="lesson-header-left">
+              <small id="sectionName"></small>
+              <h2 id="lessonTitle"></h2>
+              <div class="player-controls">
+                <select id="playbackSpeed" title="Playback Speed">
+                  <option value="0.5">0.5x</option>
+                  <option value="0.75">0.75x</option>
+                  <option value="1" selected>1x</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="1.75">1.75x</option>
+                  <option value="2">2x</option>
+                </select>
+                <button id="pipBtn" class="button secondary">Picture in Picture</button>
+                <button id="completeBtn" class="button secondary">Mark complete</button>
+              </div>
+            </div>
+          </div>
+          <div id="watchInfo" class="watch-info" hidden><span id="watchTime">0:00 watched</span><span id="watchPercent">0%</span></div>
+        </div>
+
+        <div id="previewCard" class="card resource-preview-card" hidden>
+          <div class="preview-head">
+            <div><small class="preview-label">RESOURCE VIEWER</small><h3 id="previewTitle">Resource preview</h3></div>
+            <div class="preview-toolbar"><button id="resourceExternal" class="button secondary">Open externally</button><button id="closePreview" class="button secondary">Close</button></div>
+          </div>
+          <div id="previewLoading" class="preview-message" hidden>Loading resource...</div>
+          <div id="previewUnsupported" class="preview-message" hidden></div>
+          <iframe id="resourcePreview" title="Resource preview"></iframe>
+          <pre id="textPreview" class="text-preview" hidden></pre>
+        </div>
+
+        <div id="resourcesCard" class="card" hidden>
+          <h3>Lesson resources</h3><div id="resources"></div>
+        </div>
+
+        <div id="notesCard" class="card" hidden>
+          <h3>Notes</h3>
+          <textarea id="notes" placeholder="Write key ideas, timestamps, exercises, or questions..."></textarea>
+        </div>
+
+        <div id="bookmarksCard" class="card" hidden>
+          <h3>Bookmarks</h3>
+          <div id="bookmarksList" class="bookmarks-list"></div>
+          <form id="addBookmarkForm" class="add-bookmark-form">
+            <input type="text" id="bookmarkNote" placeholder="Add a note for this timestamp..." autocomplete="off" />
+            <button type="submit" class="button primary">Add Bookmark</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <template id="sectionTemplate">
+    <section class="tree-section">
+      <button class="section-toggle"><span class="chevron">›</span><span class="section-copy"><strong></strong><small></small></span><span class="section-percent"></span></button>
+      <div class="lesson-list"></div>
+    </section>
+  </template>
+
+  <div id="globalSearchModal" class="modal-overlay" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Global Search</h3>
+        <button id="closeGlobalSearchBtn" class="button secondary">Close</button>
+      </div>
+      <input type="search" id="globalSearchInput" class="modal-search" placeholder="Search across all notes and bookmarks..." />
+      <div id="globalSearchResults" class="modal-results"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+
+<noscript><div style="position:fixed;inset:0;background:#070b16;color:white;display:grid;place-items:center;padding:30px;text-align:center;z-index:9999"><div><h1>JavaScript is disabled</h1><p>Please enable JavaScript in Chrome or Microsoft Edge, then reopen this file.</p></div></div></noscript>
+</body>
+</html>
