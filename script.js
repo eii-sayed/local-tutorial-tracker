@@ -6,7 +6,7 @@ let course = null, selected = null, filter = "all", urls = [];
 const collator = new Intl.Collator(undefined,{numeric:true,sensitivity:"base"});
 
 function saved(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")}catch{return {}}}
-function persist(id,patch){const data=saved();data[id]={...(data[id]||{}),...patch};localStorage.setItem(STORAGE_KEY,JSON.stringify(data));if(selected?.id===id)Object.assign(selected,patch);const lesson=findLesson(id);if(lesson)Object.assign(lesson,patch);renderTree();renderSummary()}
+function persist(id,patch,skipRender=false){const data=saved();data[id]={...(data[id]||{}),...patch};localStorage.setItem(STORAGE_KEY,JSON.stringify(data));if(selected?.id===id)Object.assign(selected,patch);const lesson=findLesson(id);if(lesson)Object.assign(lesson,patch);if(!skipRender){renderTree();renderSummary()}}
 function extension(name){return (name.split(".").pop()||"").toLowerCase()}
 function leadingNumber(name){const m=name.match(/^\s*(\d+)\s*[.\-_)]?/);return m?Number(m[1]):999999}
 function cleanSection(name){return name.replace(/^\s*\d+\s*[-._)]\s*/,"").trim()||name}
@@ -54,7 +54,7 @@ function renderResources(){const box=$("#resources");box.innerHTML="";for(const 
 function renderBookmarks(){const box=$("#bookmarksList");box.innerHTML="";if(!selected)return;const bmarks=selected.bookmarks||[];if(!bmarks.length){box.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0">No bookmarks yet.</p>';return}bmarks.sort((a,b)=>a.time-b.time).forEach((b,i)=>{const d=document.createElement("div");d.className="bookmark-item";d.innerHTML=`<span class="bookmark-time">${fmt(b.time)}</span><p class="bookmark-text">${escapeHtml(b.text)}</p><button class="bookmark-delete" title="Delete">×</button>`;d.querySelector(".bookmark-time").onclick=()=>{const p=$("#videoPlayer");if(p)p.currentTime=b.time};d.querySelector(".bookmark-delete").onclick=()=>{bmarks.splice(i,1);persist(selected.id,{bookmarks:bmarks});renderBookmarks()};box.appendChild(d)})}
 $("#addBookmarkForm").onsubmit=(e)=>{e.preventDefault();if(!selected||!selected.video)return;const input=$("#bookmarkNote"),text=input.value.trim();if(!text)return;const bmarks=selected.bookmarks||[],p=$("#videoPlayer");bmarks.push({time:p.currentTime||0,text});persist(selected.id,{bookmarks:bmarks});input.value="";renderBookmarks()};
 $("#closePreview").onclick=()=>{resetPreview();$("#previewCard").hidden=true};
-function savePlayer(){const p=$("#videoPlayer");if(!selected?.video||!p.duration)return;const progress=Math.min(100,Math.round(p.currentTime/p.duration*100));persist(selected.id,{currentTime:p.currentTime,duration:p.duration,progress,completed:progress>=95||selected.completed});updateWatch();updateCompleteButton()}
+function savePlayer(){const p=$("#videoPlayer");if(!selected?.video||!p.duration)return;const progress=Math.min(100,Math.round(p.currentTime/p.duration*100));persist(selected.id,{currentTime:p.currentTime,duration:p.duration,progress,completed:progress>=95||selected.completed},true);const activeMini=document.querySelector(".lesson.active .mini-progress i");if(activeMini)activeMini.style.width=`${progress}%`;updateWatch();updateCompleteButton()}
 function nextVideo(){const vids=allLessons().filter(l=>l.video),i=vids.findIndex(l=>l.id===selected.id);persist(selected.id,{completed:true,progress:100,currentTime:selected.duration||$("#videoPlayer").duration});if(vids[i+1])selectLesson(vids[i+1],true)}
 
 [$("#folderInput"),$("#emptyFolderInput")].forEach(i=>i.addEventListener("change",e=>buildCourse(e.target.files)));
@@ -62,7 +62,7 @@ $("#searchInput").addEventListener("input",renderTree);
 document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.filter;renderTree()});
 $("#videoPlayer").addEventListener("pause",savePlayer);$("#videoPlayer").addEventListener("ended",nextVideo);let lastSave=0;$("#videoPlayer").addEventListener("timeupdate",()=>{if(Date.now()-lastSave>5000){lastSave=Date.now();savePlayer()}});
 $("#completeBtn").onclick=()=>{if(!selected)return;persist(selected.id,{completed:!selected.completed,progress:!selected.completed?100:selected.progress});updateCompleteButton()};
-let noteTimer;$("#notes").addEventListener("input",e=>{clearTimeout(noteTimer);const value=e.target.value;noteTimer=setTimeout(()=>selected&&persist(selected.id,{notes:value}),300)});
+let noteTimer;$("#notes").addEventListener("input",e=>{clearTimeout(noteTimer);const value=e.target.value;noteTimer=setTimeout(()=>selected&&persist(selected.id,{notes:value},true),300)});
 $("#continueBtn").onclick=()=>{const l=findLesson(localStorage.getItem(`${STORAGE_KEY}-last`));if(l)selectLesson(l,true)};
 
 // New Features: Sidebar toggle, Expand/Collapse all, Playback controls, Keyboard shortcuts
