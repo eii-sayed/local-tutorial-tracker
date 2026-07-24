@@ -113,6 +113,8 @@ input[type="search"]:focus, textarea:focus, select:focus { border-color: var(--b
 
 .tree-section { border-bottom: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 4px; border-radius: 12px; overflow: hidden; }
 .tree-section:last-child { border-bottom: none; }
+.tree-section.active-section { border: 1px solid rgba(99, 102, 241, 0.5); background: rgba(99, 102, 241, 0.05); }
+.tree-section.active-section .section-toggle { background: rgba(99, 102, 241, 0.1); }
 .section-toggle { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 12px; border: 0; background: transparent; color: var(--text); text-align: left; cursor: pointer; transition: background 0.2s; }
 .section-toggle:hover { background: rgba(255, 255, 255, 0.03); }
 .chevron { font-size: 20px; color: var(--muted); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: inline-block; width: 16px; text-align: center; }
