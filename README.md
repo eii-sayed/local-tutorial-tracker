@@ -14,6 +14,7 @@ Welcome to your completely upgraded, modern Local Tutorial Tracker!
 - **Auto-Preview:** If a lesson contains only resources (like a standalone PDF), it will instantly load into the main viewer!
 - **Improved Video Player:** Added Picture-in-Picture mode, Playback Speed controls, and Keyboard Shortcuts (`Space`/`K` for Play/Pause, `F` for Fullscreen).
 - **Stable Sidebar:** Tracking progress no longer causes your folders to forcefully collapse!
+- **Progress & Notes Backup (NEW):** Easily export your entire watch history, notes, and timestamps to a backup file (`⬇ Export`), and restore them anytime (`⬆ Import`).
 - **Custom Bookmarks (NEW):** Add specific timestamps and notes directly to a video timeline.
 - **Global Search (NEW):** Search for specific keywords across all notes and bookmarks you've written.
 

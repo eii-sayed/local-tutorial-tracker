@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,29 +9,44 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <header class="topbar">
-    <div class="brand"><span class="brand-icon">▶</span><div><strong>Tutorial Tracker</strong><small>Private local course library</small></div></div>
+    <div class="brand"><span class="brand-icon">▶</span>
+      <div><strong>Tutorial Tracker</strong><small>Private local course library</small></div>
+    </div>
     <div class="top-actions">
-      <button id="globalSearchBtn" class="button secondary" title="Search Notes and Bookmarks" hidden>Search Notes</button>
+      <button id="globalSearchBtn" class="button secondary" title="Search Notes and Bookmarks" hidden>Search
+        Notes</button>
+      <button id="exportDataBtn" class="button secondary" title="Export progress, notes, and bookmarks to a backup file">⬇ Export</button>
+      <label id="importDataLabel" class="button secondary" title="Import progress, notes, and bookmarks from a backup file">⬆ Import<input id="importDataInput" type="file" accept=".json,application/json" hidden></label>
       <button id="toggleSidebarBtn" class="button secondary" title="Toggle Sidebar" hidden>☰</button>
       <button id="continueBtn" class="button secondary" hidden>Continue watching</button>
-      <label class="button primary">Open course folder<input id="folderInput" type="file" webkitdirectory directory multiple hidden></label>
+      <label class="button primary">Open course folder<input id="folderInput" type="file" webkitdirectory directory
+          multiple hidden></label>
     </div>
   </header>
 
   <main id="emptyState" class="empty-state">
     <div class="empty-icon">▤</div>
     <h1>Turn your tutorial folder into a course</h1>
-    <p>Select the root folder containing numbered section folders, videos, PDFs, PowerPoints, HTML files, and other resources.</p>
-    <label class="button primary large">Choose course folder<input id="emptyFolderInput" type="file" webkitdirectory directory multiple hidden></label>
+    <p>Select the root folder containing numbered section folders, videos, PDFs, PowerPoints, HTML files, and other
+      resources.</p>
+    <label class="button primary large">Choose course folder<input id="emptyFolderInput" type="file" webkitdirectory
+        directory multiple hidden></label>
     <small>Files stay on this computer. Progress and notes are stored in this browser.</small>
   </main>
 
   <main id="app" class="app" hidden>
     <section class="summary">
-      <div><small>COURSE</small><h1 id="courseTitle">Course</h1><p id="courseMeta"></p><p id="resourceMeta" class="resource-meta"></p></div>
-      <div class="overall"><span id="overallText">0%</span><div class="progress"><i id="overallBar"></i></div></div>
+      <div><small>COURSE</small>
+        <h1 id="courseTitle">Course</h1>
+        <p id="courseMeta"></p>
+        <p id="resourceMeta" class="resource-meta"></p>
+      </div>
+      <div class="overall"><span id="overallText">0%</span>
+        <div class="progress"><i id="overallBar"></i></div>
+      </div>
     </section>
 
     <div class="layout">
@@ -53,7 +69,10 @@
       <section class="content">
         <div class="player-card">
           <div id="playerEmpty" class="player-empty">Select a video lesson</div>
-          <video id="videoPlayer" controls preload="metadata" playsinline hidden></video><div id="videoError" class="video-error" hidden><strong>Browser cannot play this video</strong><span id="videoErrorText">The video codec may not be supported.</span><a id="externalVideo" class="button primary" href="#" target="_blank" download>Open or download video</a></div>
+          <video id="videoPlayer" controls preload="metadata" playsinline hidden></video>
+          <div id="videoError" class="video-error" hidden><strong>Browser cannot play this video</strong><span
+              id="videoErrorText">The video codec may not be supported.</span><a id="externalVideo"
+              class="button primary" href="#" target="_blank" download>Open or download video</a></div>
           <div id="lessonHeader" class="lesson-header" hidden>
             <div class="lesson-header-left">
               <small id="sectionName"></small>
@@ -73,13 +92,17 @@
               </div>
             </div>
           </div>
-          <div id="watchInfo" class="watch-info" hidden><span id="watchTime">0:00 watched</span><span id="watchPercent">0%</span></div>
+          <div id="watchInfo" class="watch-info" hidden><span id="watchTime">0:00 watched</span><span
+              id="watchPercent">0%</span></div>
         </div>
 
         <div id="previewCard" class="card resource-preview-card" hidden>
           <div class="preview-head">
-            <div><small class="preview-label">RESOURCE VIEWER</small><h3 id="previewTitle">Resource preview</h3></div>
-            <div class="preview-toolbar"><button id="resourceExternal" class="button secondary">Open externally</button><button id="closePreview" class="button secondary">Close</button></div>
+            <div><small class="preview-label">RESOURCE VIEWER</small>
+              <h3 id="previewTitle">Resource preview</h3>
+            </div>
+            <div class="preview-toolbar"><button id="resourceExternal" class="button secondary">Open
+                externally</button><button id="closePreview" class="button secondary">Close</button></div>
           </div>
           <div id="previewLoading" class="preview-message" hidden>Loading resource...</div>
           <div id="previewUnsupported" class="preview-message" hidden></div>
@@ -88,7 +111,8 @@
         </div>
 
         <div id="resourcesCard" class="card" hidden>
-          <h3>Lesson resources</h3><div id="resources"></div>
+          <h3>Lesson resources</h3>
+          <div id="resources"></div>
         </div>
 
         <div id="notesCard" class="card" hidden>
@@ -110,7 +134,8 @@
 
   <template id="sectionTemplate">
     <section class="tree-section">
-      <button class="section-toggle"><span class="chevron">›</span><span class="section-copy"><strong></strong><small></small></span><span class="section-percent"></span></button>
+      <button class="section-toggle"><span class="chevron">›</span><span
+          class="section-copy"><strong></strong><small></small></span><span class="section-percent"></span></button>
       <div class="lesson-list"></div>
     </section>
   </template>
@@ -121,13 +146,23 @@
         <h3>Global Search</h3>
         <button id="closeGlobalSearchBtn" class="button secondary">Close</button>
       </div>
-      <input type="search" id="globalSearchInput" class="modal-search" placeholder="Search across all notes and bookmarks..." />
+      <input type="search" id="globalSearchInput" class="modal-search"
+        placeholder="Search across all notes and bookmarks..." />
       <div id="globalSearchResults" class="modal-results"></div>
     </div>
   </div>
 
   <script src="script.js"></script>
 
-<noscript><div style="position:fixed;inset:0;background:#070b16;color:white;display:grid;place-items:center;padding:30px;text-align:center;z-index:9999"><div><h1>JavaScript is disabled</h1><p>Please enable JavaScript in Chrome or Microsoft Edge, then reopen this file.</p></div></div></noscript>
+  <noscript>
+    <div
+      style="position:fixed;inset:0;background:#070b16;color:white;display:grid;place-items:center;padding:30px;text-align:center;z-index:9999">
+      <div>
+        <h1>JavaScript is disabled</h1>
+        <p>Please enable JavaScript in Chrome or Microsoft Edge, then reopen this file.</p>
+      </div>
+    </div>
+  </noscript>
 </body>
+
 </html>
